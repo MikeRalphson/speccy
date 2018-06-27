@@ -7,7 +7,7 @@ describe('common.js', () => {
         it('considers [a, b, c] to not contain duplicates', () => {
             should(common.hasDuplicates(['a', 'b', 'c'])).be.eql(false);
         });
-        it('considers [a, b, b] to comtain duplicates', () => {
+        it('considers [a, b, b] to contain duplicates', () => {
             should(common.hasDuplicates(['a', 'b', 'b'])).be.eql(true);
         });
     });

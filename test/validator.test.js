@@ -2,7 +2,7 @@
 
 const path = require('path');
 const loader = require('../lib/loader.js');
-const validator = require('../lib/validator.js');
+const validator = require('oas-validator');
 const fs = require('fs');
 
 const fetchTestFiles = dir => {
