@@ -5,6 +5,7 @@
 const loader = require('./lib/loader.js');
 const linter = require('./lib/linter.js');
 const validator = require('./lib/validator.js');
+const fromJsonSchema = require('json-schema-to-openapi-schema');
 
 const colors = process.env.NODE_DISABLE_COLORS ? {} : {
   red: '\x1b[31m',
@@ -85,10 +86,15 @@ const command = async (file, cmd) => {
 
     await loader.loadRuleFiles(cmd.rules, { verbose });
 
+    let filters = [];
+    if (cmd.jsonSchema) {
+        filters.push(fromJsonSchema);
+    }
+
     const spec = await loader.readOrError(file, {
-        jsonSchema: cmd.jsonSchema === true,
         resolve: true,
-        verbose,
+        filters,
+        verbose
     });
 
     validator.validate(spec, { verbose, skip: cmd.skip }, (err, _options) => {
