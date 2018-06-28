@@ -5,8 +5,8 @@ const path = require('path');
 const loader = require('../lib/loader.js');
 const linter = require('../lib/linter.js');
 
-const runLinter = (object, input, options = {}) => {
-    return linter.lint(object, input, options);
+const runLinter = (object, input, tag, options = {}) => {
+    return linter.lint(object, input, tag, options);
 }
 
 const getLinterErrors = linter => {
@@ -21,7 +21,7 @@ const testFixture = (fixture, rules) => {
         linter.initialize();
 
         loader.loadRuleFiles(rules).then(() => {
-            const actualRuleErrors = getLinterErrors(runLinter(fixture.object, input, { skip }));
+            const actualRuleErrors = getLinterErrors(runLinter(fixture.object, input, fixture.tag, { skip }));
             if (expectValid) {
                 var msg = JSON.stringify(input) + ' is valid';
                 var assertion = () => actualRuleErrors.should.be.empty('expected no linter errors, but got some');
@@ -63,13 +63,13 @@ describe('linter.js', () => {
             const lintAndExpectErrors = (rule, input, expectedErrors) => {
                 linter.initialize();
                 linter.createNewRule(rule);
-                getLinterErrors(runLinter('something', input)).should.be.deepEqual(expectedErrors);
+                getLinterErrors(runLinter('something', input, 'something')).should.be.deepEqual(expectedErrors);
             }
 
             const lintAndExpectValid = async (rule, input) => {
                 linter.initialize();
                 linter.createNewRule(rule);
-                getLinterErrors(runLinter('something', input)).should.be.empty();
+                getLinterErrors(runLinter('something', input, 'something')).should.be.empty();
             }
 
             context('alphabetical', () => {

@@ -4,7 +4,7 @@
 
 const loader = require('./lib/loader.js');
 const linter = require('./lib/linter.js');
-const validator = require('./lib/validator.js');
+const validator = require('oas-validator');
 
 const colors = process.env.NODE_DISABLE_COLORS ? {} : {
   red: '\x1b[31m',
@@ -26,7 +26,7 @@ ${colors.yellow + pointer}
   if (err.name === 'AssertionError') {
       output += colors.reset + truncateLongMessages(err.message);
   }
-  else if (err instanceof validator.JSONSchemaError) {
+  else if (Array.isArray(err)) {
       output += colors.reset + readableJsonSchemaMessages(err).join('\n');
   }
   else {
@@ -91,7 +91,7 @@ const command = async (file, cmd) => {
         verbose,
     });
 
-    validator.validate(spec, { verbose, skip: cmd.skip }, (err, _options) => {
+    validator.validate(spec, { verbose, skip: cmd.skip, lint: true, linter: linter.lint }, (err, _options) => {
         const { context, lintResults } = _options;
 
         if (err) {
@@ -101,7 +101,7 @@ const command = async (file, cmd) => {
             process.exit(1);
         }
 
-        if (lintResults.length) {
+        if (lintResults && lintResults.length) {
             console.error(colors.red + 'Specification contains lint errors: ' + lintResults.length + colors.reset);
             const output = formatLintResults(lintResults);
             console.warn(output)
